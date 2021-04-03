@@ -29,9 +29,14 @@ const fileFilter = (req,file,cb) => {
     }else{
       cb(null,false);
     }
-  }
+  } 
+
+
+  const userRoutes = require('./routes/user');
+
 
   app.use(express.json());
+  
   app.use(multer({storage:fileStorage,fileFilter:fileFilter}).single('image'));
   app.use('/images', express.static(path.join(__dirname, 'images')));
   app.use((req, res, next) => {
@@ -43,6 +48,9 @@ const fileFilter = (req,file,cb) => {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
   });
+
+  app.use('/user/',userRoutes);
+
   app.use((err, req, res, next) => {
     console.log(err);
     const status = err.statusCode || 500;
