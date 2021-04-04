@@ -1,9 +1,9 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res, next) => {
-    console.log(req.body.user);
   const reqUser = JSON.parse(req.body.user);
   let imageUrl = "";
   if (req.file) {
@@ -26,6 +26,47 @@ exports.register = async (req, res, next) => {
     });
     await newUser.save();
     res.status(201).send();
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.login = async (req, res, next) => {
+  const { email, password } = req.body;  
+  let mUser;
+  try {
+    const user =await User.findOne({email});
+    if (!user) {
+      const err = new Error("User is not found");
+      err.statusCode = 404;
+      return next(err);
+    }
+    mUser = user;
+    console.log(mUser);
+    const isEqual = await bcrypt.compare(password, mUser.password);
+    if (!isEqual) {
+      const err = new Error("E-mail or password is not correct");
+      err.statusCode = 402;
+      return next(err);
+    }
+    const token = jwt.sign(
+      {
+        email: mUser.email,
+        userId: mUser._id.toString(),
+      },
+      "todoSuperSecret",
+      {
+        expiresIn: "90d",
+      }
+    );
+    const tokenResponse = {
+      token
+    }
+
+    res.status(200).json(tokenResponse);
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
