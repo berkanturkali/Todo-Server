@@ -35,16 +35,16 @@ exports.register = async (req, res, next) => {
 };
 
 exports.login = async (req, res, next) => {
-  const { email, password } = req.body;  
+  const { email, password } = req.body;
   let mUser;
   try {
-    const user =await User.findOne({email});
+    const user = await User.findOne({ email });
     if (!user) {
       const err = new Error("User is not found");
       err.statusCode = 404;
       return next(err);
     }
-    mUser = user;    
+    mUser = user;
     const isEqual = await bcrypt.compare(password, mUser.password);
     if (!isEqual) {
       const err = new Error("E-mail or password is not correct");
@@ -63,8 +63,8 @@ exports.login = async (req, res, next) => {
     );
     const tokenResponse = {
       token,
-      userId: mUser._id.toString()
-    }
+      userId: mUser._id.toString(),
+    };
 
     res.status(200).json(tokenResponse);
   } catch (err) {
@@ -75,7 +75,25 @@ exports.login = async (req, res, next) => {
   }
 };
 
-exports.getUser = async(req,res,next) =>{
-  const userId = req.body.id;
-  
-}
+exports.getUser = async (req, res, next) => {
+  const userId = req.params.id;
+  if (userId != req.userId) {
+    const err = new Error("Not authenticated,please login.");
+    err.statusCode = 401;
+    return next(err);
+  }
+  try {
+    const user = await User.findById(userId).select('-_id -password');
+    if(!user){   
+      const err = new Error("No user found.");
+      err.statusCode = 404;
+      return next(err);
+    }    
+    return res.status(200).json(user);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
