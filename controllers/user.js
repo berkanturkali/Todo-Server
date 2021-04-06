@@ -44,8 +44,7 @@ exports.login = async (req, res, next) => {
       err.statusCode = 404;
       return next(err);
     }
-    mUser = user;
-    console.log(mUser);
+    mUser = user;    
     const isEqual = await bcrypt.compare(password, mUser.password);
     if (!isEqual) {
       const err = new Error("E-mail or password is not correct");
@@ -63,7 +62,8 @@ exports.login = async (req, res, next) => {
       }
     );
     const tokenResponse = {
-      token
+      token,
+      userId: mUser._id.toString()
     }
 
     res.status(200).json(tokenResponse);
@@ -74,3 +74,8 @@ exports.login = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getUser = async(req,res,next) =>{
+  const userId = req.body.id;
+  
+}
