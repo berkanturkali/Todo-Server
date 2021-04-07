@@ -2,6 +2,8 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const fs = require('fs');
+const path = require('path');
 
 exports.register = async (req, res, next) => {
   const reqUser = JSON.parse(req.body.user);
@@ -116,9 +118,13 @@ exports.updateUser = async (req,res,next) =>{
     }
     if(req.file){
       imageUrl = req.file.path;
+      if(user.userImage){
+        clearImage(user.userImage);
+      }
     }else{
       imageUrl = user.userImage;
     }
+    
     user.firstName = firstName;
     user.lastName = lastName;
     user.email = email;
@@ -131,4 +137,8 @@ exports.updateUser = async (req,res,next) =>{
     }
     next(err);  
 }
+}
+const clearImage = filePath => {
+  filePath = path.join(__dirname, '..', filePath);
+  fs.unlink(filePath, err => console.log(err));
 }
