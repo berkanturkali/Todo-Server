@@ -92,8 +92,43 @@ exports.getUser = async (req, res, next) => {
     return res.status(200).json(user);
   } catch (err) {
     if (!err.statusCode) {
-      err.statusCode = 500;
+      err.statusCode = 500;      
     }
     next(err);
   }
-};
+}
+
+exports.updateUser = async (req,res,next) =>{
+  const userId = req.params.id;  
+  const {firstName,lastName,email} = JSON.parse(req.body.credentials);
+  let imageUrl;
+  if (userId != req.userId) {
+    const err = new Error("Not authenticated,please login.");
+    err.statusCode = 401;
+    return next(err);
+  } 
+  try{
+    const user = await User.findById(userId).select('-password');  
+    if(!user){   
+      const err = new Error("No user found.");
+      err.statusCode = 404;
+      return next(err);
+    }
+    if(req.file){
+      imageUrl = req.file.path;
+    }else{
+      imageUrl = user.userImage;
+    }
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.email = email;
+    user.userImage = imageUrl;
+    await user.save();
+    res.status(200).send();    
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;      
+    }
+    next(err);  
+}
+}
