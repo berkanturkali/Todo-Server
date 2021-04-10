@@ -32,6 +32,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const userRoutes = require("./routes/user");
+const todoRoutes = require("./routes/todo");
 
 app.use(express.json());
 app.use(
@@ -49,6 +50,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/user/", userRoutes);
+app.use("/todo/",todoRoutes);
 
 app.use((err, req, res, next) => {
   console.log(err);

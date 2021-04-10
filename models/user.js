@@ -19,7 +19,13 @@ const userSchema = new Schema({
         type:String,
         required:true
     },
-    userImage:String
+    userImage:String,
+    todos:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:'Todo'
+        }
+    ]
 });
 
 

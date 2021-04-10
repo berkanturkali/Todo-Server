@@ -115,6 +115,12 @@ exports.updateUser = async (req,res,next) =>{
       const err = new Error("No user found.");
       err.statusCode = 404;
       return next(err);
+    } 
+    const isExists = await User.findOne({email});
+    if(isExists){
+      const err =new Error("E-mail already exist.Please try another one.");
+      err.statusCode = 409;
+      return next(err);
     }
     if(req.file){
       imageUrl = req.file.path;
