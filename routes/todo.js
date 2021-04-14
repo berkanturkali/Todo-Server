@@ -5,6 +5,12 @@ const isAuth = require('../middleware/is-auth');
 
 router.post("/new/",isAuth,todoController.addTodo);
 
+router.get("/todos/",isAuth,todoController.getTodos);
+
+router.get("/:id",isAuth,todoController.getTodo);
+
+router.patch("/:id",isAuth,todoController.updateTodo);
+
 module.exports = router;
 
 

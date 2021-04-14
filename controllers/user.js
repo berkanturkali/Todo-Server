@@ -2,8 +2,8 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 exports.register = async (req, res, next) => {
   const reqUser = JSON.parse(req.body.user);
@@ -85,66 +85,74 @@ exports.getUser = async (req, res, next) => {
     return next(err);
   }
   try {
-    const user = await User.findById(userId).select('-_id -password');
-    if(!user){   
+    const user = await User.findById(userId).select("-_id -password");
+    if (!user) {
       const err = new Error("No user found.");
       err.statusCode = 404;
       return next(err);
-    }    
+    }
     return res.status(200).json(user);
   } catch (err) {
     if (!err.statusCode) {
-      err.statusCode = 500;      
+      err.statusCode = 500;
     }
     next(err);
   }
-}
+};
 
-exports.updateUser = async (req,res,next) =>{
-  const userId = req.params.id;  
-  const {firstName,lastName,email} = JSON.parse(req.body.credentials);
+exports.updateUser = async (req, res, next) => {
+  const userId = req.params.id;
+  const { firstName, lastName, email } = JSON.parse(req.body.credentials);
   let imageUrl;
+  let isOk;
   if (userId != req.userId) {
     const err = new Error("Not authenticated,please login.");
     err.statusCode = 401;
     return next(err);
-  } 
-  try{
-    const user = await User.findById(userId).select('-password');  
-    if(!user){   
+  }
+  try {
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
       const err = new Error("No user found.");
       err.statusCode = 404;
       return next(err);
-    } 
-    const isExists = await User.findOne({email});
-    if(isExists){
-      const err =new Error("E-mail already exist.Please try another one.");
-      err.statusCode = 409;
-      return next(err);
     }
-    if(req.file){
-      imageUrl = req.file.path;
-      if(user.userImage){
-        clearImage(user.userImage);
+    if (user.email == email) {
+      isOk = true;
+    } else {
+      const isExists = await User.findOne({ email });
+      if (isExists) {
+        const err = new Error("E-mail already exist.Please try another one.");
+        err.statusCode = 409;
+        return next(err);
       }
-    }else{
-      imageUrl = user.userImage;
+      isOk = true;
     }
-    
-    user.firstName = firstName;
-    user.lastName = lastName;
-    user.email = email;
-    user.userImage = imageUrl;
-    await user.save();
-    res.status(200).send();    
+    if (isOk) {
+      if (req.file) {
+        imageUrl = req.file.path;
+        if (user.userImage) {
+          clearImage(user.userImage);
+        }
+      } else {
+        imageUrl = user.userImage;
+      }
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.email = email;
+      user.userImage = imageUrl;
+      await user.save();
+      res.status(200).send();
+    }
   } catch (err) {
     if (!err.statusCode) {
-      err.statusCode = 500;      
+      err.statusCode = 500;
     }
-    next(err);  
-}
-}
-const clearImage = filePath => {
-  filePath = path.join(__dirname, '..', filePath);
-  fs.unlink(filePath, err => console.log(err));
-}
+    next(err);
+  }
+};
+
+const clearImage = (filePath) => {
+  filePath = path.join(__dirname, "..", filePath);
+  fs.unlink(filePath, (err) => console.log(err));
+};
