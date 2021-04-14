@@ -1,13 +1,14 @@
 const Todo = require("../models/todo");
 
 exports.addTodo = async (req, res, next) => {
-  const { title, category, date, todo } = req.body;
+  const { title, category, date, todo,important } = req.body;
   const newTodo = new Todo({
     title,
     category,
     date,
     todo,
     user: req.userId,
+    important    
   });
   try {
     await newTodo.save();
@@ -59,18 +60,18 @@ exports.getTodo = async (req, res, next) => {
   }
 };
 
-exports.updateTodo = async(req,res,next) =>{
+exports.updateTodo = async (req, res, next) => {
   const todoId = req.params.id;
-  const {title,category,date,completed,important,todo} = req.body;
+  const { title, category, date, completed, important, todo } = req.body;
   const mTodo = todo;
-  try{
+  try {
     const todo = await Todo.findById(todoId).select("-user");
     if (!todo) {
       const err = new Error("No found");
       err.statusCode = 404;
       return next(err);
     }
-    todo.title =title;
+    todo.title = title;
     todo.category = category;
     todo.date = date;
     todo.todo = mTodo;
@@ -78,10 +79,28 @@ exports.updateTodo = async(req,res,next) =>{
     todo.important = important;
     await todo.save();
     res.status(200).send("Updated successfully");
-  }catch (err) {
+  } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
     }
     next(err);
   }
-}
+};
+exports.deleteTodo = async (req, res, next) => {
+  const todoId = req.params.id;
+  try {
+    const todo = await Todo.findById(todoId).select("-user");
+    if (!todo) {
+      const err = new Error("No found");
+      err.statusCode = 404;
+      return next(err);
+    }
+    await todo.deleteOne();
+    res.status(200).send("Deleted successfully");
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};

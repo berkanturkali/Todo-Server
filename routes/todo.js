@@ -11,6 +11,8 @@ router.get("/:id",isAuth,todoController.getTodo);
 
 router.patch("/:id",isAuth,todoController.updateTodo);
 
+router.delete("/:id",isAuth,todoController.deleteTodo);
+
 module.exports = router;
 
 
