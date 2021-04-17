@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const beautifyUnique = require('mongoose-unique-validator');
 
 const todoSchema = new Schema({
     title:{
         type:String,
-        required:true,
-        unique:'Title already exists please try another one',        
+        required:true            
     },
     category:{
         type:String,
@@ -34,7 +32,5 @@ const todoSchema = new Schema({
         default:false
     }
 });
-
-todoSchema.plugin(beautifyUnique);
 
 module.exports = mongoose.model('Todo',todoSchema);

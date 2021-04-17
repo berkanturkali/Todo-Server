@@ -52,11 +52,16 @@ app.use((req, res, next) => {
 app.use("/user/", userRoutes);
 app.use("/todo/",todoRoutes);
 
+app.all('*',(req,res,next)=>{
+  const err = new Error(`Can't find ${req.originalUrl} on this server!`)
+  err.statusCode = 404;
+  next(err);
+});
+
 app.use((err, req, res, next) => {
   console.log(err);
   const status = err.statusCode || 500;
-  const message = err.message;
-  const data = err.data;
+  const message = err.message;  
   res.status(status).json({ status: status, message: message });
 });
 
