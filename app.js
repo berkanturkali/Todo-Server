@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const multer = require("multer");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
+const AppError = require("./utils/appError");
+const globalErrorHandler = require("./controllers/errorController");
 dotenv.config({ path: "./config.env" });
 const app = express();
 const port = process.env.PORT;
@@ -50,20 +52,13 @@ app.use((req, res, next) => {
 });
 
 app.use("/user/", userRoutes);
-app.use("/todo/",todoRoutes);
+app.use("/todo/", todoRoutes);
 
-app.all('*',(req,res,next)=>{
-  const err = new Error(`Can't find ${req.originalUrl} on this server!`)
-  err.statusCode = 404;
-  next(err);
+app.all("*", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-app.use((err, req, res, next) => {
-  console.log(err);
-  const status = err.statusCode || 500;
-  const message = err.message;  
-  res.status(status).json({ status: status, message: message });
-});
+app.use(globalErrorHandler);
 
 mongoose.set("useNewUrlParser", true);
 mongoose.set("useFindAndModify", false);
