@@ -74,17 +74,17 @@ exports.updateTodo = catchAsync(async (req, res, next) => {
   const todoId = req.params.id;
   const { title, category, date, completed, important, todo } = req.body;
   const mTodo = todo; 
-    const isExists = await Todo.findById(todoId).select("-user");
-    if (!isExists) { 
+    const existsTodo = await Todo.findById(todoId).select("-user");
+    if (!existsTodo) { 
       return next(new AppError("Not Found",404));
     }
-    todo.title = title;
-    todo.category = category;
-    todo.date = date;
-    todo.todo = mTodo;
-    todo.completed = completed;
-    todo.important = important;
-    await todo.save();
+    existsTodo.title = title;
+    existsTodo.category = category;
+    existsTodo.date = date;
+    existsTodo.todo = mTodo;
+    existsTodo.completed = completed;
+    existsTodo.important = important;
+    await existsTodo.save();
     res.status(200).send("Updated successfully");  
 });
 exports.deleteTodo = catchAsync(async (req, res, next) => {
