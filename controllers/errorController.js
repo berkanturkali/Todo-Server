@@ -7,6 +7,7 @@ const handleCastErrorDB = (err) => {
 };
 
 const sendErrorProd = (err, res) => {
+  console.log(err);
   if (err.isOperational) {     
     res.status(err.statusCode).json({ status: err.statusCode, message: err.message });
   } else {

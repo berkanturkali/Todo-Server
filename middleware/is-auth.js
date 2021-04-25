@@ -3,8 +3,6 @@ const AppError = require('../utils/appError');
 module.exports = (req, res, next) => {
   const authHeader = req.get('Authorization');
   if (!authHeader) {
-    // const err = new Error('Not authenticated.');
-    // err.statusCode = 401;
     throw new AppError('Not authenticated',401);
   }
   const token = authHeader.split(' ')[1];
@@ -15,8 +13,6 @@ module.exports = (req, res, next) => {
     throw AppError("Could not verify",401);
   }
   if (!decodedToken) {
-    // const err = new Error('Not authenticated.');
-    // err.statusCode = 401;
     throw new AppError('Not authenticated',401);
   }
   req.userId = decodedToken.userId;

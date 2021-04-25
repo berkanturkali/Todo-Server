@@ -94,5 +94,12 @@ exports.deleteTodo = catchAsync(async (req, res, next) => {
       return next(new AppError("Not found",404));
     }
     await todo.deleteOne();
-    res.status(200).send("Deleted successfully"); 
+    res.status(204).send(); 
 });
+
+exports.deleteCompletedTodos = catchAsync(async(req,res,next)  =>{  
+   await Todo.deleteMany({"user":req.userId,"completed":true})
+   res.status(204).send();
+});
+
+
