@@ -1,12 +1,14 @@
 const Todo = require("../models/todo");
+const user = require("../models/user");
 const User = require("../models/user");
+const { use } = require("../routes/todo");
 const AppError = require("../utils/appError");
 const catchAsync = require('../utils/catchAsync');
+const mongoose = require('mongoose');
 
 exports.addTodo = catchAsync(async (req, res, next) => {
-  const { title, category, date, todo, important } = req.body;
-  const newTodo = new Todo({
-    title,
+  const {category, date, todo, important } = req.body;
+  const newTodo = new Todo({    
     category,
     date,
     todo,
@@ -72,13 +74,12 @@ exports.getTodo = catchAsync(async (req, res, next) => {
 
 exports.updateTodo = catchAsync(async (req, res, next) => {
   const todoId = req.params.id;
-  const { title, category, date, completed, important, todo } = req.body;
+  const {category, date, completed, important, todo } = req.body;
   const mTodo = todo; 
     const existsTodo = await Todo.findById(todoId).select("-user");
     if (!existsTodo) { 
       return next(new AppError("Not Found",404));
-    }
-    existsTodo.title = title;
+    }    
     existsTodo.category = category;
     existsTodo.date = date;
     existsTodo.todo = mTodo;
@@ -94,11 +95,16 @@ exports.deleteTodo = catchAsync(async (req, res, next) => {
       return next(new AppError("Not found",404));
     }
     await todo.deleteOne();
+    const user = await User.findById(req.userId);
+    user.todos.pull(todoId);
+    await user.save();
+
+
     res.status(204).send(); 
 });
 
 exports.deleteCompletedTodos = catchAsync(async(req,res,next)  =>{
-  const completedTodo = await Todo.findOne({"user":req.userId,"completed":true});
+  const completedTodos = await Todo.findOne({"user":req.userId,"completed":true});
   if(!completedTodos){
     return next(new AppError("Could not found completed todo",400));
   }  

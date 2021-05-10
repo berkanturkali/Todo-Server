@@ -40,7 +40,7 @@ app.use(express.json());
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
 );
-app.use("/images", express.static(path.join(__dirname, "images")));
+app.use(express.static(`${__dirname}/images`));
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -51,8 +51,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/user/", userRoutes);
-app.use("/todo/", todoRoutes);
+app.use("/user", userRoutes);
+app.use("/todo", todoRoutes);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
