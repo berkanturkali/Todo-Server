@@ -97,8 +97,12 @@ exports.deleteTodo = catchAsync(async (req, res, next) => {
     res.status(204).send(); 
 });
 
-exports.deleteCompletedTodos = catchAsync(async(req,res,next)  =>{  
-   await Todo.deleteMany({"user":req.userId,"completed":true})
+exports.deleteCompletedTodos = catchAsync(async(req,res,next)  =>{
+  const completedTodo = await Todo.findOne({"user":req.userId,"completed":true});
+  if(!completedTodos){
+    return next(new AppError("Could not found completed todo",400));
+  }  
+   await Todo.deleteMany({"user":req.userId,"completed":true});
    res.status(204).send();
 });
 

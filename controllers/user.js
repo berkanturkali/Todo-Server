@@ -61,12 +61,8 @@ exports.login = catchAsync(async (req, res, next) => {
   
 });
 
-exports.getUser = catchAsync(async (req, res, next) => {
-  const userId = req.params.id;
-  if (userId != req.userId) {
-    return next(new AppError("Not authenticated,please login.",401));
-  }
-    const user = await User.findById(userId).select("-_id -password");
+exports.getMe = catchAsync(async (req, res, next) => {
+    const user = await User.findById(req.userId).select("-_id -password");
     if (!user) {
       return next(new AppError("User not found",404));
     }

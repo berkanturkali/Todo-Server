@@ -7,7 +7,7 @@ router.post("/register/",userController.register);
 
 router.post("/login/",userController.login);
 
-router.get("/:id",isAuth,userController.getUser);
+router.get("/me",isAuth,userController.getMe);
 
 router.put("/:id",isAuth,userController.updateUser);
 
