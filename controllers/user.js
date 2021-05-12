@@ -65,9 +65,8 @@ exports.getMe = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.userId).select("-_id -password");
     if (!user) {
       return next(new AppError("User not found",404));
-    }
-    return res.status(200).json(user);
- 
+    }    
+    return res.status(200).json(user); 
 });
 
 exports.updateUser = catchAsync(async (req, res, next) => {
@@ -106,8 +105,7 @@ exports.updateUser = catchAsync(async (req, res, next) => {
       user.userImage = imageUrl;
       await user.save();
       res.status(200).send();
-    }
-  
+    }  
 });
 
 const clearImage = (filePath) => {

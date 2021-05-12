@@ -3,6 +3,8 @@ const router = express.Router();
 const todoController = require("../controllers/todo");
 const isAuth = require("../middleware/is-auth");
 
+router.get("/stats",isAuth,todoController.getStats);
+
 router.post("/new", isAuth, todoController.addTodo);
 
 router.get("/todos", isAuth, todoController.getTodos);
