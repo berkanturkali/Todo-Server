@@ -59,7 +59,7 @@ exports.getTodos = catchAsync(async (req, res, next) => {
     .skip((currentPage - 1) * perPage)
     .limit(perPage)
     .select("-user")
-    .sort("-date");
+    .sort("-createdAt");
   res.status(200).json(todos);
 });
 
