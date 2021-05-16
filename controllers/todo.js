@@ -7,13 +7,15 @@ const catchAsync = require("../utils/catchAsync");
 const mongoose = require("mongoose");
 
 exports.addTodo = catchAsync(async (req, res, next) => {
-  const { category, date, todo, important } = req.body;
+  console.log(req.body);
+  const { category, date, todo, important,notifyMe } = req.body;
   const newTodo = new Todo({
     category,
     date,
     todo,
     user: req.userId,
     important,
+    notifyMe
   });
   const user = await User.findById(req.userId);
   if (!user) {
@@ -59,7 +61,7 @@ exports.getTodos = catchAsync(async (req, res, next) => {
     .skip((currentPage - 1) * perPage)
     .limit(perPage)
     .select("-user")
-    .sort("-createdAt");
+    .sort("-date");
   res.status(200).json(todos);
 });
 

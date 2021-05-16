@@ -40,7 +40,7 @@ app.use(express.json());
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
 );
-app.use(express.static(`${__dirname}/images`));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(

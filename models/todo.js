@@ -26,6 +26,10 @@ const todoSchema = new Schema({
     important:{
         type:Boolean,
         default:false
+    },
+    notifyMe:{
+        type:Boolean,
+        required:true
     }
 },
 { timestamps: true }
