@@ -30,6 +30,10 @@ const todoSchema = new Schema({
     notifyMe:{
         type:Boolean,
         required:true
+    },
+    notificationId:{
+        type:Number,
+        required:true
     }
 },
 { timestamps: true }

@@ -8,14 +8,15 @@ const mongoose = require("mongoose");
 
 exports.addTodo = catchAsync(async (req, res, next) => {
   console.log(req.body);
-  const { category, date, todo, important,notifyMe } = req.body;
+  const { category, date, todo, important,notifyMe,notificationId } = req.body;
   const newTodo = new Todo({
     category,
     date,
     todo,
     user: req.userId,
     important,
-    notifyMe
+    notifyMe,
+    notificationId
   });
   const user = await User.findById(req.userId);
   if (!user) {
@@ -76,7 +77,7 @@ exports.getTodo = catchAsync(async (req, res, next) => {
 
 exports.updateTodo = catchAsync(async (req, res, next) => {
   const todoId = req.params.id;
-  const { category, date, completed, important, todo } = req.body;
+  const { category, date, completed, important, todo,notifyMe,notificationId } = req.body;
   const mTodo = todo;
   const existsTodo = await Todo.findById(todoId).select("-user");
   if (!existsTodo) {
@@ -87,6 +88,8 @@ exports.updateTodo = catchAsync(async (req, res, next) => {
   existsTodo.todo = mTodo;
   existsTodo.completed = completed;
   existsTodo.important = important;
+  existsTodo.notifyMe = notifyMe;
+  existsTodo.notificationId = notificationId;
   await existsTodo.save();
   res.status(200).send("Updated successfully");
 });
