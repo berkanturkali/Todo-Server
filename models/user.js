@@ -18,14 +18,7 @@ const userSchema = new Schema({
     password:{
         type:String,
         required:true
-    },
-    userImage:String,
-    todos:[
-        {
-            type:Schema.Types.ObjectId,
-            ref:'Todo'
-        }
-    ]
+    }
 });
 
 

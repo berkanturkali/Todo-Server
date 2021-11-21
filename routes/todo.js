@@ -5,6 +5,8 @@ const isAuth = require("../middleware/is-auth");
 
 router.get("/stats",isAuth,todoController.getStats);
 
+router.get("/allStats",todoController.getAllStats);
+
 router.post("/new", isAuth, todoController.addTodo);
 
 router.get("/todos", isAuth, todoController.getTodos);
@@ -12,6 +14,8 @@ router.get("/todos", isAuth, todoController.getTodos);
 router.get("/:id", isAuth, todoController.getTodo);
 
 router.patch("/:id", isAuth, todoController.updateTodo);
+
+router.put("/:id/:completed",isAuth,todoController.updateCompleteField);
 
 router.delete(
     "/delete-completed-todos",

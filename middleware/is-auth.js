@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
   try {
     decodedToken =  jwt.verify(token, 'todoSuperSecret');
   } catch (err) {
-    throw AppError("Could not verify",401);
+    throw new AppError("Could not verify",401);
   }
   if (!decodedToken) {
     throw new AppError('Not authenticated',401);

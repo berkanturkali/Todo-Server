@@ -34,7 +34,7 @@ const todoSchema = new Schema({
     notificationId:{
         type:Number,
         required:true
-    }
+    },
 },
 { timestamps: true }
 );
