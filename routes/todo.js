@@ -5,7 +5,7 @@ const isAuth = require("../middleware/is-auth");
 
 router.get("/stats",isAuth,todoController.getStats);
 
-router.get("/allStats",todoController.getAllStats);
+router.get("/allStats",isAuth,todoController.getAllStats);
 
 router.post("/new", isAuth, todoController.addTodo);
 

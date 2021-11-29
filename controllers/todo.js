@@ -1,7 +1,6 @@
 const Todo = require("../models/todo");
 const user = require("../models/user");
 const User = require("../models/user");
-const { use } = require("../routes/todo");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const mongoose = require("mongoose");
@@ -53,10 +52,11 @@ exports.getTodos = catchAsync(async (req, res, next) => {
   totalItems = count;
   const todos = await Todo.find(filters[0])
     .where("user")
+    .sort({ date: -1 })
     .equals(req.userId.toString())
     .skip((currentPage - 1) * perPage)
-    .limit(perPage)
-    .sort("-date");
+    .limit(perPage);
+  console.log(todos);
   res.status(200).json(todos);
 });
 
@@ -69,15 +69,20 @@ exports.getTodo = catchAsync(async (req, res, next) => {
   res.status(200).json(todo);
 });
 
-exports.updateCompleteField = catchAsync(async (req,res,next) =>{
+exports.updateCompleteField = catchAsync(async (req, res, next) => {
   const todoId = req.params.id;
   const completed = req.params.completed;
-  const todo = await Todo.findByIdAndUpdate(todoId,{completed:completed},() =>{
-    res.status(200).send("Updated Successfully");
-  });  
+  const todo = await Todo.findByIdAndUpdate(
+    todoId,
+    { completed: completed },
+    () => {
+      res.status(200).send("Updated Successfully");
+    }
+  );
 });
 
 exports.updateTodo = catchAsync(async (req, res, next) => {
+  console.log(req.body);
   const todoId = req.params.id;
   const updateCompleteField = req.body.updateCompleteField;
   const {
@@ -93,9 +98,9 @@ exports.updateTodo = catchAsync(async (req, res, next) => {
   if (!todoo) {
     return next(new AppError("Not Found", 404));
   }
-  if(updateCompleteField){
-    todoo.completed = true
-  }else{
+  if (updateCompleteField) {
+    todoo.completed = true;
+  } else {
     todoo.category = category;
     todoo.date = date;
     todoo.todo = todo;
@@ -103,7 +108,7 @@ exports.updateTodo = catchAsync(async (req, res, next) => {
     todoo.important = important;
     todoo.notifyMe = notifyMe;
     todoo.notificationId = notificationId;
-  } 
+  }
   await todoo.save();
   res.status(200).send("Updated successfully");
 });
@@ -126,39 +131,66 @@ exports.deleteCompletedTodos = catchAsync(async (req, res, next) => {
   if (!completedTodos) {
     return next(new AppError("Could not found completed todo", 400));
   }
+  const ids = await Todo.find({ user: req.userId, completed: true }).select(
+    "notificationId -_id"
+  );
   await Todo.deleteMany({ user: req.userId, completed: true });
-  res.status(204).send();
+  console.log(ids);
+  res.json(ids);
 });
 
 exports.getStats = catchAsync(async (req, res, next) => {
-  const totalCount = await Todo.countDocuments({ user: req.userId });
-  const activeCount = await Todo.countDocuments({
+  const total = await Todo.countDocuments({ user: req.userId });
+  const user = await User.findById(req.userId).select('-password -_id -todos -userImage')
+  const active = await Todo.countDocuments({
     user: req.userId,
     completed: false,
   });
-  const completedCount = totalCount - activeCount;
-  const resObject = {
-    activeTasksPercent: activeCount,
-    completedTasksPercent: completedCount,
-    totalCount,
+  const completed = total - active;
+  const response = {
+    active,
+    completed,
+    total,
+    fullname:user.firstName+ " " + user.lastName,
+    email:user.email
   };
-  res.status(200).json(resObject);
+  res.status(200).json(response);
 });
 
 exports.getAllStats = catchAsync(async (req, res, next) => {
+  const userId = req.userId;
   const stats = await Todo.aggregate([
+    {
+      $match: { user: mongoose.Types.ObjectId(userId) },
+    },
     {
       $group: {
         _id: "$category",
         total: { $sum: 1 },
-        important: { $sum: { $cond: ["$important", 1, 0] } },
-        notImportant: { $sum: { $cond: ["$important", 0, 1] } },
-        completed: { $sum: { $cond: ["$completed", 1, 0] } },
-        active: { $sum: { $cond: ["$completed", 0, 1] } },
+        important: {
+          $sum: {
+            $cond: ["$important", 1, 0],
+          },
+        },
+        notImportant: {
+          $sum: {
+            $cond: ["$important", 0, 1],
+          },
+        },
+        completed: {
+          $sum: {
+            $cond: ["$completed", 1, 0],
+          },
+        },
+        active: {
+          $sum: {
+            $cond: ["$completed", 0, 1],
+          },
+        },
       },
     },
     {
-      $sort: { totalCounts: -1 },
+      $sort: { total: -1 },
     },
     {
       $addFields: { category: "$_id" },
@@ -167,6 +199,5 @@ exports.getAllStats = catchAsync(async (req, res, next) => {
       $project: { _id: 0 },
     },
   ]);
-  console.log(stats);
-  res.status(200).send(stats);
+  res.status(200).json(stats);
 });

@@ -6,7 +6,7 @@ const User = require("../models/user");
 const AppError = require("../utils/appError");
 
 exports.signup = catchAsync(async (req, res, next) => {
-    const reqUser = JSON.parse(req.body.user);
+    const reqUser = req.body;
       const user = await User.findOne({ email: reqUser.email });
       if (user) {    
         return next(new AppError("Email already exists.Please try another one",409));

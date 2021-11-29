@@ -15,7 +15,6 @@ if (process.env.NODE_ENV == "development") {
   app.use(morgan("dev"));
 }
 const authRoutes = require("./routes/auth");
-const userRoutes = require("./routes/user");
 const todoRoutes = require("./routes/todo");
 
 app.use(express.json());
@@ -30,7 +29,6 @@ app.use((req, res, next) => {
 });
 
 app.use("/auth",authRoutes);
-app.use("/user", userRoutes);
 app.use("/todo", todoRoutes);
 
 app.all("*", (req, res, next) => {
