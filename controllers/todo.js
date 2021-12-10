@@ -52,8 +52,9 @@ exports.getTodos = catchAsync(async (req, res, next) => {
   totalItems = count;
   const todos = await Todo.find(filters[0])
     .where("user")
-    .sort({ date: -1 })
     .equals(req.userId.toString())
+    .sort({ date: -1 })
+    .sort({createdAt: -1})
     .skip((currentPage - 1) * perPage)
     .limit(perPage);
   console.log(todos);
