@@ -1,7 +1,7 @@
 
 # Todo
 
- This is the backend code of the Android & IOS Todo app.
+ This is the backend code of the Android & IOS Todo apps.
 ## Installation
 
 * Clone the project
