@@ -31,11 +31,7 @@ const todoSchema = new Schema({
         type:Boolean,
         required:true
     },
-    notificationId:{
-        type:Number,
-        required:true
-    },
 },
 { timestamps: true }
 );
-module.exports = mongoose.model('Todo',todoSchema);
+module.exports = mongoose.model('Todo', todoSchema);

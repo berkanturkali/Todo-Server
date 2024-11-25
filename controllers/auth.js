@@ -6,6 +6,7 @@ const User = require("../models/user");
 const AppError = require("../utils/appError");
 
 const SuccessResponse = require("../models/success_response");
+const ErrorResponse = require("../models/error_response");
 
 exports.signup = catchAsync(async (req, res, next) => {
     const reqUser = req.body;
@@ -32,11 +33,11 @@ exports.signup = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
       const user = await User.findOne({ email });
       if (!user) {     
-        return next(new AppError("User is not found",404));
+        return next(new ErrorResponse("User is not found",404));
       }
       const isEqual = await bcrypt.compare(password, user.password);
       if (!isEqual) {    
-        return next(new AppError("Email or password is not correct",402));
+        return next(new ErrorResponse("Email or password is not correct", 402));
       }
       const token = jwt.sign(
         {
@@ -50,7 +51,16 @@ exports.signup = catchAsync(async (req, res, next) => {
       ); 
       const tokenResponse = {
         token: token,
-        id:user._id
+        id: user._id
       }
-      res.status(200).json(tokenResponse);    
+
+      let response = new SuccessResponse();
+
+      response.data = tokenResponse;
+
+
+      console.log(response.toJson());
+      
+      
+      res.status(200).json(response.toJson());    
   });

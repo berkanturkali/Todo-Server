@@ -1,22 +1,16 @@
-const mongoose = require("mongoose");
-const AppError = require("../utils/appError");
+const ErrorResponse = require("../models/error_response");
 
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}.`;
-  return new AppError(message,400);
+  return new ErrorResponse(message,400);
 };
 
 const sendErrorProd = (err, res) => {
-  console.log(err);
-  if (err.isOperational) {     
-    res.status(err.statusCode).json({ status: err.statusCode, message: err.message });
-  } else {
-    console.error("ERROR", err);
-    res.status(500).json({
-      status: 500,
-      message: "Something went wrong",
-    });
-  }
+  console.log(err);  
+  const error = new ErrorResponse();
+
+  error.message = err.message;
+    res.status(err.statusCode).json(error.toJson());
 };
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;

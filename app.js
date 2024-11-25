@@ -4,12 +4,12 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
-const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 dotenv.config({ path: "./config.env" });
 const app = express();
 const port = process.env.PORT;
 const MONGO_URL = process.env.MONGO_URI;
+const ErrorResponse = require("./models/error_response");
 
 if (process.env.NODE_ENV == "development") {
   app.use(morgan("dev"));
@@ -32,7 +32,7 @@ app.use("/auth",authRoutes);
 app.use("/todo", todoRoutes);
 
 app.all("*", (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+  next(new ErrorResponse(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
 app.use(globalErrorHandler);

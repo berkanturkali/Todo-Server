@@ -1,7 +1,7 @@
 
 # Todo
 
- This is the backend code of the Android Todo app.
+ This is the backend code of the Android & IOS Todo app.
 ## Installation
 
 * Clone the project
@@ -19,3 +19,5 @@ MONGO_URI = "mongodb://localhost:27017/todo" //todo is the database name
 ```
   ## Android Code
   * [Repo](https://github.com/berkanturkali/todo-android)
+  ## IOS Code
+  * [Repo](https://github.com/berkanturkali/Todo-IOS)

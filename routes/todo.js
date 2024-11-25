@@ -15,13 +15,14 @@ router.get("/:id", isAuth, todoController.getTodo);
 
 router.patch("/:id", isAuth, todoController.updateTodo);
 
-router.put("/:id/:completed",isAuth,todoController.updateCompleteField);
+router.put("/:id/:completed", isAuth, todoController.updateCompleteField);
 
 router.delete(
     "/delete-completed-todos",
     isAuth,
     todoController.deleteCompletedTodos
   );
-
+  router.delete("/delete-all-todos", isAuth, todoController.deleteAllTodos);
 router.delete("/:id", isAuth, todoController.deleteTodo);
+
 module.exports = router;
