@@ -10,6 +10,7 @@ const app = express();
 const port = process.env.PORT;
 const MONGO_URL = process.env.MONGO_URI;
 const ErrorResponse = require("./models/error_response");
+const i18n = require("./utils/localization");
 
 if (process.env.NODE_ENV == "development") {
   app.use(morgan("dev"));
@@ -28,11 +29,34 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(i18n.init);
+
+const setLocaleFromHeader = (req, res, next) => {
+  const language = req.header('Accept-Language');
+
+  if(language) {
+    const preferedLanguages = language.split(',').map(language => {
+      const parts = language.trim().split(';');
+      return parts[0].toLowerCase();
+    });
+    
+    const supportedLocales = i18n.getLocales();
+    const matchedLocale = preferedLanguages.find(language => supportedLocales.includes(language));
+    if(matchedLocale) {
+      i18n.setLocale(matchedLocale)
+    }
+  }
+  next();
+}
+
+app.use(setLocaleFromHeader);
+
 app.use("/auth",authRoutes);
 app.use("/todo", todoRoutes);
 
 app.all("*", (req, res, next) => {
-  next(new ErrorResponse(`Can't find ${req.originalUrl} on this server!`, 404));
+  const url = req.originalUrl
+  next(new ErrorResponse(res.__("can_not_find_url_on_this_server", { url }), 404));
 });
 
 app.use(globalErrorHandler);

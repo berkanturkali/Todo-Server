@@ -1,0 +1,16 @@
+{
+    "email_already_exists_please_try_another_one": "E-posta zaten mevcut. Lütfen başka bir tane deneyin.",
+    "signup_successful_welcome": "Kayıt başarılı! Hoş geldiniz!",
+    "user_not_found_please_check_your_credentials_and_try_again": "Kullanıcı bulunamadı. Lütfen bilgilerinizi kontrol edin ve tekrar deneyin.",
+    "invalid_email_or_password_please_try_again": "Geçersiz e-posta veya şifre. Lütfen tekrar deneyin.",
+    "new_todo_added_successfully": "Yeni To-do başarıyla eklendi.",
+    "todo_not_found": "To-do bulunamadı.",
+    "todo_updated_successfully": "To-do başarıyla güncellendi.",
+    "todo_deleted_successfully": "To-do başarıyla silindi.",
+    "completed_todos_deleted_successfully": "Tamamlanan To-dolar başarıyla silindi!",
+    "all_todos_deleted_successfully": "Tüm To-dolar başarıyla silindi!",
+    "no_completed_todos_found": "Tamamlanan To-do bulunamadi.",
+    "authentication_required_please_login_continue": "Kimlik doğrulama gerekli. Devam etmek için lütfen giriş yapın.",
+    "the_token_could_not_be_verified_please_try_to_login_again": "Token doğrulanamadı. Lütfen tekrar giriş yapmayı deneyin.",
+    "can_not_find_url_on_this_server": "Sunucuda {url} bulunamadı."
+}

@@ -5,6 +5,8 @@ const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const mongoose = require("mongoose");
 
+const i18n = require("../utils/localization");
+
 exports.addTodo = catchAsync(async (req, res, next) => {
   console.log(req.body);
   const { category, date, todo, important, notifyMe } =
@@ -18,7 +20,7 @@ exports.addTodo = catchAsync(async (req, res, next) => {
     notifyMe,
   });
   await newTodo.save();
-  let response = new SuccessResponse("Your new todo saved successfully!").toJson();
+  let response = new SuccessResponse(i18n.__("new_todo_added_successfully")).toJson();
   res.status(201).json(response);
 });
 exports.getTodos = catchAsync(async (req, res, next) => {
@@ -68,7 +70,7 @@ exports.getTodo = catchAsync(async (req, res, next) => {
   const todoId = req.params.id;
   const todo = await Todo.findById(todoId).select("-user");
   if (!todo) {
-    return next(new AppError("Not Found", 404));
+    return next(new AppError(i18n.__("todo_not_found"), 404));
   }
   res.status(200).json(todo);
 });
@@ -83,7 +85,7 @@ exports.updateCompleteField = catchAsync(async (req, res, next) => {
 
   let response = new SuccessResponse();
   response.data = todo;
-  response.message = "Updated successfully."
+  response.message = i18n.__("todo_updated_successfully")
   res.status(200).json(response.toJson());
 });
 
@@ -101,7 +103,7 @@ exports.updateTodo = catchAsync(async (req, res, next) => {
   } = req.body;
   const todoo = await Todo.findById(todoId).select("-user");
   if (!todoo) {
-    return next(new AppError("Not Found", 404));
+    return next(new AppError(i18n.__("todo_not_found"), 404));
   }
   if (updateCompleteField) {
     todoo.completed = true;
@@ -114,7 +116,7 @@ exports.updateTodo = catchAsync(async (req, res, next) => {
     todoo.notifyMe = notifyMe;
   }
   await todoo.save();
-  res.status(200).send("Updated successfully");
+  res.status(200).send(i18n.__("todo_updated_successfully"));
 });
 
 exports.deleteTodo = catchAsync(async (req, res, next) => {
@@ -122,12 +124,12 @@ exports.deleteTodo = catchAsync(async (req, res, next) => {
   const todo = await Todo.findById(todoId).select("-user");
   console.log(todo);
   if (!todo) {
-    return next(new AppError("Not found", 404));
+    return next(new AppError(i18n.__("todo_not_found"), 404));
   }
   await todo.deleteOne();
   let response = new SuccessResponse();
   response.data = todo
-  response.message = "Todo has been deleted successfully."
+  response.message = i18n.__("todo_deleted_successfully");
   res.status(200).json(response.toJson());
 });
 
@@ -137,18 +139,18 @@ exports.deleteCompletedTodos = catchAsync(async (req, res, next) => {
     completed: true,
   });
   if (!completedTodos) {
-    return next(new AppError("Could not found completed todo", 400));
+    return next(new AppError(i18n.__("no_completed_todos_found"), 400));
   }
   await Todo.deleteMany({ user: req.userId, completed: true });
   const response = new SuccessResponse();
-  response.message = "Completed todos have been deleted successfully";
+  response.message = i18n.__();
   res.status(200).json(response.toJson());
 });
 
 exports.deleteAllTodos = catchAsync(async (req, res, next) => {
   await Todo.deleteMany({ user: req.userId });
   let response = new SuccessResponse();
-  response.message = "All todos deleted successfully."
+  response.message = i18n.__("all_todos_deleted_successfully");
   res.status(200).json(response.toJson());
 });
 

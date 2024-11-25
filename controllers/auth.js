@@ -8,12 +8,14 @@ const AppError = require("../utils/appError");
 const SuccessResponse = require("../models/success_response");
 const ErrorResponse = require("../models/error_response");
 
+const i18n = require('../utils/localization');
+
 exports.signup = catchAsync(async (req, res, next) => {
     const reqUser = req.body;
         
       const user = await User.findOne({ email: reqUser.email });
       if (user) {    
-        return next(new AppError("Email already exists.Please try another one",409));
+        return next(new AppError(i18n.__("email_already_exists_please_try_another_one"),409));
       }
       const hashedPw = await bcrypt.hash(reqUser.password, 12);
       const newUser = new User({
@@ -23,7 +25,7 @@ exports.signup = catchAsync(async (req, res, next) => {
         password: hashedPw,
       });
       await newUser.save();
-      let response = new SuccessResponse("Successfully signed up").toJson();
+      let response = new SuccessResponse(i18n.__("signup_successful_welcome")).toJson();
       
       res.status(201).json(response);
   
@@ -33,11 +35,11 @@ exports.signup = catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
       const user = await User.findOne({ email });
       if (!user) {     
-        return next(new ErrorResponse("User is not found",404));
+        return next(new ErrorResponse(i18n.__("user_not_found_please_check_your_credentials_and_try_again"),404));
       }
       const isEqual = await bcrypt.compare(password, user.password);
       if (!isEqual) {    
-        return next(new ErrorResponse("Email or password is not correct", 402));
+        return next(new ErrorResponse(i18n.__("invalid_email_or_password_please_try_again"), 402));
       }
       const token = jwt.sign(
         {

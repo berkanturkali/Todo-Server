@@ -1,0 +1,16 @@
+{
+    "email_already_exists_please_try_another_one": "Email already exists.Please try another one.",
+    "signup_successful_welcome": "Signup successful! Welcome!",
+    "user_not_found_please_check_your_credentials_and_try_again": "User not found. Please check your credentials and try again.",
+    "invalid_email_or_password_please_try_again": "Invalid email or password. Please try again.",
+    "new_todo_added_successfully": "New to-do added successfully.",
+    "todo_not_found": "To-do not found.",
+    "todo_updated_successfully": "To-do updated succesfully.",
+    "todo_deleted_successfully": "To-do deleted successfully.",
+    "completed_todos_deleted_successfully": "Completed to-dos deleted successfully!",
+    "all_todos_deleted_successfully": "All to-dos deleted successfully!",
+    "no_completed_todos_found": "No completed to-dos found.",
+    "authentication_required_please_login_continue": "Authentication required. Please login to continue.",
+    "the_token_could_not_be_verified_please_try_to_login_again": "The token could not be verified. Please try to login again.",
+    "can_not_find_url_on_this_server": "Can not find {url}, on this server"
+}
